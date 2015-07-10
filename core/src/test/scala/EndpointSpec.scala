@@ -18,7 +18,7 @@
 package remotely
 
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-import remotely.transport.netty.NettyTransport
+import remotely.transport.netty.{NettyServer, NettyTransport}
 
 import scala.concurrent.duration.DurationInt
 import scalaz.stream.Process
@@ -36,7 +36,7 @@ class EndpointSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
     val server = new CountServer
 
-    val shutdown = server.environment.serve(goodAddress).run
+    val shutdown = NettyServer.serve(goodAddress, server.environment).run
 
     val endpoint = Endpoint.failoverChain(10.seconds, endpoints)
 

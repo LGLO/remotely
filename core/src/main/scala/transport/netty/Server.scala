@@ -25,6 +25,8 @@ import io.netty.buffer.Unpooled
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.handler.ssl.SslContext
 import java.net.InetSocketAddress
+import shapeless.HList
+
 import scalaz.concurrent.{Strategy,Task}
 import scalaz.stream.{Process,async}
 import scodec.bits.BitVector
@@ -149,6 +151,16 @@ object NettyServer {
       }
     }
   }
+
+  def serve[H <: HList](addr: InetSocketAddress,
+            env: Environment[H],
+            strategy: Strategy = Strategy.DefaultStrategy,
+            numBossThreads: Option[Int] = None,
+            numWorkerThreads: Option[Int] = None,
+            monitoring: Monitoring = Monitoring.empty,
+            capabilities: Capabilities = Capabilities.default,
+            sslParams: Option[SslParameters] = None):Task[Task[Unit]] =
+    start(addr, env.serverHandler(monitoring), strategy, numBossThreads, numWorkerThreads, capabilities, monitoring, sslParams)
 }
 
 /**

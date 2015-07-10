@@ -24,7 +24,7 @@ import io.netty.channel.{Channel,ChannelFuture,ChannelHandlerContext,ChannelFutu
 import scalaz.stream.Cause
 import scalaz.{-\/,\/,\/-}
 import scalaz.stream.{async,Process}
-import scalaz.concurrent.Task
+import scalaz.concurrent.{Strategy, Task}
 import scodec.bits.BitVector
 
 class NettyTransport(val pool: GenericObjectPool[Channel]) extends Handler {
@@ -79,4 +79,7 @@ object NettyTransport {
              sslParams: Option[SslParameters] = None): Task[NettyTransport] =
 
   NettyConnectionPool.default(Process.constant(host), expectedSigs, workerThreads, monitoring, sslParams).map(new NettyTransport(_))
+
+
+
 }

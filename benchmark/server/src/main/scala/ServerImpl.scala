@@ -19,6 +19,8 @@ package remotely
 package example.benchmark
 package server
 
+import remotely.transport.netty.NettyServer
+
 import scalaz.concurrent._
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
@@ -43,6 +45,6 @@ object Main {
     val port = Integer.parseInt(argv(0))
     val addr = new java.net.InetSocketAddress("localhost", port)
     val server = new BenchmarkServerImpl
-    val shutdown: Task[Unit] = server.environment.serve(addr).run
+    val shutdown: Task[Unit] = NettyServer.serve(addr, server.environment).run
   }
 }

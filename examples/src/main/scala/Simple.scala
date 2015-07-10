@@ -19,7 +19,7 @@ package remotely
 package examples
 
 import java.net.InetSocketAddress
-import remotely.transport.netty.NettyTransport
+import remotely.transport.netty.{NettyServer, NettyTransport}
 import scalaz.concurrent.{Strategy,Task}
 import codecs._
 
@@ -66,7 +66,7 @@ object SimpleMain extends App {
   println(env)
 
   // create a server for this environment
-  val server = env.serve(addr, monitoring = Monitoring.consoleLogger("[server]")).run
+  val server = NettyServer.serve(addr, env, monitoring = Monitoring.consoleLogger("[server]")).run
 
   val transport = NettyTransport.single(addr).run
   val expr: Remote[Int] = sum(List(0,1,2,3,4))

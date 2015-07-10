@@ -21,7 +21,7 @@ import org.scalatest.matchers.{Matcher,MatchResult}
 import org.scalatest.{FlatSpec,Matchers,BeforeAndAfterAll}
 import scalaz.concurrent.Task
 import scalaz.stream.Process
-import remotely.transport.netty.NettyTransport
+import remotely.transport.netty.{NettyServer, NettyTransport}
 import scala.concurrent.duration.DurationInt
 import java.util.concurrent.Executors
 
@@ -60,8 +60,8 @@ class UberSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
   val server1 = new CountServer
   val server2 = new CountServer
-  val shutdown1 = server1.environment.serve(addr1).run
-  val shutdown2 = server2.environment.serve(addr2).run
+  val shutdown1 = NettyServer.serve(addr1, server1.environment).run
+  val shutdown2 = NettyServer.serve(addr2, server2.environment).run
 
   override def afterAll() {
     shutdown1.run

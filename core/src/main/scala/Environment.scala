@@ -61,7 +61,7 @@ case class Environment[H <: HList](codecs: Codecs[H], values: Values) {
   def values(v: Values): Environment[H] =
     this.populate(_ => v)
 
-  private def serverHandler(monitoring: Monitoring): Handler = { bytes =>
+  def serverHandler(monitoring: Monitoring): Handler = { bytes =>
       // we assume the input is a framed stream, and encode the response(s)
       // as a framed stream as well
       bytes pipe Process.await1[BitVector] /*server.Handler.deframe*/ evalMap { bs =>
@@ -69,33 +69,33 @@ case class Environment[H <: HList](codecs: Codecs[H], values: Values) {
       }
     }
 
-  /**
-    * start a netty server listening to the given address
-    * 
-    * @param addr the address to bind to
-    * @param strategy the strategy used for processing incoming requests
-    * @param numBossThreads number of boss threads to create. These are
-    * threads which accept incoming connection requests and assign
-    * connections to a worker. If unspecified, the default of 2 will be used
-    * @param numWorkerThreads number of worker threads to create. If 
-    * unspecified the default of 2 * number of cores will be used
-    * @param capabilities, the capabilities which will be sent to the client upon connection
-    */
-  def serve(addr: InetSocketAddress,
-            strategy: Strategy = Strategy.DefaultStrategy,
-            numBossThreads: Option[Int] = None,
-            numWorkerThreads: Option[Int] = None,
-            monitoring: Monitoring = Monitoring.empty,
-            capabilities: Capabilities = Capabilities.default,
-            sslParams: Option[SslParameters] = None): Task[Task[Unit]] =
-    transport.netty.NettyServer.start(addr,
-                                      serverHandler(monitoring),
-                                      strategy,
-                                      numBossThreads,
-                                      numWorkerThreads,
-                                      capabilities,
-                                      monitoring,
-                                      sslParams)
+//  /**
+//    * start a netty server listening to the given address
+//    *
+//    * @param addr the address to bind to
+//    * @param strategy the strategy used for processing incoming requests
+//    * @param numBossThreads number of boss threads to create. These are
+//    * threads which accept incoming connection requests and assign
+//    * connections to a worker. If unspecified, the default of 2 will be used
+//    * @param numWorkerThreads number of worker threads to create. If
+//    * unspecified the default of 2 * number of cores will be used
+//    * @param capabilities, the capabilities which will be sent to the client upon connection
+//    */
+//  def serve(addr: InetSocketAddress,
+//            strategy: Strategy = Strategy.DefaultStrategy,
+//            numBossThreads: Option[Int] = None,
+//            numWorkerThreads: Option[Int] = None,
+//            monitoring: Monitoring = Monitoring.empty,
+//            capabilities: Capabilities = Capabilities.default,
+//            sslParams: Option[SslParameters] = None): Task[Task[Unit]] =
+//    transport.netty.NettyServer.start(addr,
+//                                      serverHandler(monitoring),
+//                                      strategy,
+//                                      numBossThreads,
+//                                      numWorkerThreads,
+//                                      capabilities,
+//                                      monitoring,
+//                                      sslParams)
 }
 
 object Environment {

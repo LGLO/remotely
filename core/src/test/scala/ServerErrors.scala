@@ -19,7 +19,7 @@ package remotely
 package test
 
 import org.scalatest.{Matchers, FlatSpec}
-import remotely.transport.netty.NettyTransport
+import remotely.transport.netty.{NettyServer, NettyTransport}
 import codecs._
 import Remote.implicits._
 
@@ -32,7 +32,7 @@ class ServerErrors extends FlatSpec with Matchers {
 
     val server = new CountServer
 
-    val shutdown = server.environment.serve(address).run
+    val shutdown = NettyServer.serve(address, server.environment).run
 
     val call = Remote.local(true).runWithoutContext(endpoint)
 
@@ -50,7 +50,7 @@ class ServerErrors extends FlatSpec with Matchers {
 
     val server = new CountServer
 
-    val shutdown = server.environment.serve(address).run
+    val shutdown = NettyServer.serve(address, server.environment).run
 
     val wrongRef = Remote.ref[(Int, Int) => Int]("ping")
 
